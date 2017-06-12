@@ -134,7 +134,7 @@ public class BLEScanner {
                     findClosest();
 
                 }
-                
+
             }
 
             @Override
@@ -316,7 +316,7 @@ public class BLEScanner {
         for (Beacon other : deviceToBeaconMap.values()) {
             if (other.urlStatus != null) {
                 Uri url = other.urlStatus.getUrl();
-                if (url != null && BEACON_HOST_NAME.equals(url.getHost()) && (mClosest == null || mClosest.rssi < other.rssi)) {
+                if (url != null && BEACON_HOST_NAME.equalsIgnoreCase(url.getHost()) && (mClosest == null || mClosest.rssi < other.rssi)) {
                     mClosest = other;
                 }
             }
