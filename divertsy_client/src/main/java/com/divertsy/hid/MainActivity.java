@@ -679,7 +679,9 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
                 // Save the data so we can record it if the user taps a waste stream button
                 ScaleMeasurement.Builder measurementBuilder = new ScaleMeasurement.Builder();
                 measurementBuilder.rawScaleWeight(fRemoteWeight);
-                measurementBuilder.scaleWeight(fRemoteWeight);
+                // ScaleMeasurement expects a double, this fixes some precision issues
+                double dWeight = Double.valueOf( Float.toString(fRemoteWeight));
+                measurementBuilder.scaleWeight(dWeight);
                 measurementBuilder.units(sRemoteUnit);
                 mLatestScaleMeasurement = measurementBuilder.build();
 
