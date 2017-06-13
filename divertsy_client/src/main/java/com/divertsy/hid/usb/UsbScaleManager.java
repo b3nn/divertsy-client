@@ -173,6 +173,9 @@ public class UsbScaleManager {
 
         connection = mUsbManager.openDevice(device);
         Log.d(TAG, "USB Interface count: " + device.getInterfaceCount());
+        if (device.getInterfaceCount() < 1) {
+            return;
+        }
         intf = device.getInterface(0);
         if (null == connection) {
             Log.e(TAG, "USB Error - unable to establish connection");
@@ -210,8 +213,9 @@ public class UsbScaleManager {
         } else {
             if (num_of_devices > 1) {
                 Log.wtf(TAG, "Extra devices are plugged in. Found: " + num_of_devices);
+                showListOfDevices(context);
             }
-            showListOfDevices(context);
+
         }
 
     }

@@ -4,42 +4,88 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/divertsybg"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#fbebd8"
+    android:paddingBottom="0sp"
+    android:paddingLeft="0sp"
+    android:paddingRight="0sp"
+    android:paddingTop="0sp"
     tools:context="com.divertsy.hid.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        >
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="bottom"
+            android:padding="15dp"
+            android:src="@drawable/divertsy_ppl"
+            />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/button_row_1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.2"
-            android:orientation="horizontal">
 
+        <LinearLayout
+            android:id="@+id/status_bar"
+            android:layout_width="match_parent"
+            android:layout_height="30sp"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:background="#888888">
+
+            <TextView
+                android:id="@+id/status_bar_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:text="@string/status_bar_msg_no_scale"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp">
+            </TextView>
         </LinearLayout>
 
-        <!--
-            Number for the Scale weight is below
-        -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.15"
-            android:gravity="center_vertical|center_horizontal"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin">
+
+            <LinearLayout
+                android:id="@+id/button_row_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:orientation="horizontal">
+
+            </LinearLayout>
+
+            <!--
+                Number for the Scale weight is below
+            -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.15"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/weight"
                         android:layout_width="wrap_content"
@@ -53,60 +99,61 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="bottom"
-                        android:gravity="bottom"
                         android:layout_marginBottom="20sp"
                         android:layout_marginRight="5sp"
+                        android:gravity="bottom"
                         android:text="@string/weight_unit_default"
                         android:textSize="25sp" />
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/button_row_2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.2"
-            android:orientation="horizontal">
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/button_row_3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.2"
-            android:orientation="horizontal">
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/extras"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.25"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <android.support.v7.widget.AppCompatButton
-                android:id="@+id/button_zero"
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:layout_gravity="left"
-                android:padding="16dp"
-                android:layout_marginLeft="10px"
-                android:text="@string/btn_zero"
-                android:textColor="#FFFFFF"
-                android:background="#bcaaa4" />
-
-
-
-            <TextView
-                android:id="@+id/location"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/button_row_2"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                tools:text="http://HOSTNAME/Floor/Location" />
+                android:layout_weight="0.2"
+                android:orientation="horizontal">
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/button_row_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:orientation="horizontal">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/extras"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight=".15"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/button_zero"
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="1sp"
+                    android:background="#bcaaa4"
+                    android:padding="10px"
+                    android:text="@string/btn_zero"
+                    android:textColor="#FFFFFF" />
+
+
+                <TextView
+                    android:id="@+id/location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    tools:text="http://HOSTNAME/Floor/Location" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

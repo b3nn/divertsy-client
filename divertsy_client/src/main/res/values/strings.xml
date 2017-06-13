@@ -20,6 +20,8 @@
     <string name="error_reporting">Error Reporting Value</string>
     <string name="error">Error</string>
     <string name="ok">OK</string>
+    <string name = "status_bar_msg_no_scale">No Scale Connected</string>
+
 
     <string name="usb_select_title">Please select the USB SCALE</string>
     <string name="usb_connect_title">Please CONNECT the Scale</string>

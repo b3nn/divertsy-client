@@ -44,6 +44,7 @@ import com.divertsy.hid.utils.AppUpdater;
 import com.divertsy.hid.utils.Utils;
 import com.divertsy.hid.utils.WeightRecorder;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.server.converter.StringToIntConverter;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -54,7 +55,7 @@ import java.util.Set;
 import static com.google.android.gms.common.ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED;
 
 /**
- *  MainActivity this is the main Divertsy class. It handles UI updates and button presses.
+ * MainActivity this is the main Divertsy class. It handles UI updates and button presses.
  */
 public class MainActivity extends AppCompatActivity implements UsbScaleManager.Callbacks, BLEScanner.OnClosestChangedListener {
 
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
 
     public static class ActivityHandler extends Handler {
         protected final WeakReference<MainActivity> mRef;
+
         public ActivityHandler(MainActivity activity) {
             mRef = new WeakReference<>(activity);
         }
@@ -138,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
                 return;
             }
 
-            if(intent.getBooleanExtra("PlayServicesUpdate",false)) {
+            if (intent.getBooleanExtra("PlayServicesUpdate", false)) {
                 GoogleApiAvailability.getInstance().getErrorDialog(this, SERVICE_VERSION_UPDATE_REQUIRED, 0).show();
             }
 
@@ -149,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
             } else {
                 Log.w(TAG, "No resolution in received Intent.");
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             Log.e(TAG, "Error starting new intent:" + e.getMessage());
         }
     }
@@ -175,6 +177,9 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
         mWeightUnit = (TextView) findViewById(R.id.weight_unit);
         mLocation = (TextView) findViewById(R.id.location);
 
+        mScaleName = (TextView) findViewById(R.id.status_bar_text);
+        mStatusBar = (LinearLayout) findViewById(R.id.status_bar);
+
 
         if (savedInstanceState == null) {
 
@@ -198,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
 
         initView();
 
-        if (! mWeightRecorder.isOfficeNameSet()){
+        if (!mWeightRecorder.isOfficeNameSet()) {
             Log.v(TAG, "No Office Name Set");
             new AlertDialog.Builder(this)
                     .setTitle(R.string.msg_set_office_name_warning_title)
@@ -284,13 +289,13 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
 
                 File csv = new File(Utils.getDivertsyFilePath(mWeightRecorder.getOffice()));
                 sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(csv));
-                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject_line );
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject_line);
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, email_body);
                 startActivity(Intent.createChooser(sharingIntent, "Send CSV File"));
 
                 return true;
             default:
-                Log.i(TAG,"No Menu Option Found. Check the list in onOptionsItemSelected.");
+                Log.i(TAG, "No Menu Option Found. Check the list in onOptionsItemSelected.");
                 return super.onOptionsItemSelected(item);
         }
     }
@@ -312,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
             // mGoogleApiClient.connect();
             startService(new Intent(this, SyncToDriveService.class));
         } else {
-            Log.e(TAG, "Activity Result Not Handled: " + requestCode );
+            Log.e(TAG, "Activity Result Not Handled: " + requestCode);
         }
     }
 
@@ -325,23 +330,23 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
         if (requestCode == PERMISSION_REQUEST_COARSE_LOCATION) {
             if (mBLEScanner != null) {
                 // If we get denied, we should stop trying.
-                if ((grantResults.length > 0) && (grantResults[0] == -1)){
+                if ((grantResults.length > 0) && (grantResults[0] == -1)) {
                     Log.e(TAG, "Coarse Permission denied. Turning off Beacon settings.");
                     mWeightRecorder.setUseBeacons(false);
                     mWeightRecorder.setUseBleScale(false);
-                } else{
+                } else {
                     mBLEScanner.onRequestPermissionsResult(requestCode, grantResults);
                 }
             }
         }
-        if (requestCode == REQUEST_WRITE_STORAGE){
+        if (requestCode == REQUEST_WRITE_STORAGE) {
             saveWeight(SAVED_WEIGHT_TYPE);
         }
     }
 
-    private void checkIfBluetoothEnabled(){
+    private void checkIfBluetoothEnabled() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            if (mWeightRecorder.useBluetoothBeacons() || mWeightRecorder.useBleScale()){
+            if (mWeightRecorder.useBluetoothBeacons() || mWeightRecorder.useBleScale()) {
                 mBLEScanner = new BLEScanner(this, REQUEST_ENABLE_BLUETOOTH, this);
             } else {
                 mBLEScanner = null;
@@ -356,7 +361,7 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
 
         // Only show the enabled streams or default if not set
         Set<String> enabledStreams = mWeightRecorder.getEnabledStreams();
-        if ((enabledStreams == null) || (enabledStreams.size() == 0)){
+        if ((enabledStreams == null) || (enabledStreams.size() == 0)) {
             enabledStreams = wasteStreams.getDefaultStreamValuesSet();
         }
         List<String> sortedStreams = wasteStreams.getSortedStreams(enabledStreams);
@@ -369,18 +374,18 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
         };
 
         // Remove all current buttons. This can happen after a settings change.
-        for(LinearLayout row: buttonRows){
-            if(row.getChildCount() > 0) row.removeAllViews();
+        for (LinearLayout row : buttonRows) {
+            if (row.getChildCount() > 0) row.removeAllViews();
         }
 
         int current_row = 0;
         for (final String stream : sortedStreams) {
-            Log.d(TAG,"Enabled Stream: " + stream);
+            Log.d(TAG, "Enabled Stream: " + stream);
 
             AppCompatButton button = new AppCompatButton(this);
             button.setText(wasteStreams.getDisplayNameFromValue(stream));
-            LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT,1f);
-            lparams.setMargins(10,10,10,10);
+            LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+            lparams.setMargins(10, 10, 10, 10);
             button.setLayoutParams(lparams);
             button.setBackgroundColor(wasteStreams.getButtonColorFromValue(stream));
             button.setTextColor(Color.WHITE);
@@ -393,7 +398,6 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
             );
             buttonRows[current_row++ % buttonRows.length].addView(button);
         }
-
 
 
         // This sets up the manual weight input pop-up when the digits are tapped
@@ -421,7 +425,8 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
                 try {
                     Double inputWeight = Double.parseDouble(input.getText().toString());
                     String inputUnits = manualUnitPicker.getSelectedItem().toString();
-
+                    setDisplayWeight(inputWeight, inputUnits, "Manual Entry", false);
+                    /*
                     // Update the on Screen Display
                     mWeight.setText(Double.toString(inputWeight));
                     mWeightUnit.setText(inputUnits);
@@ -434,17 +439,17 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
                     measurementBuilder.scaleWeight(inputWeight);
                     measurementBuilder.units(inputUnits);
                     mLatestScaleMeasurement = measurementBuilder.build();
-
+                    */
                     ZeroWeightAfterAdd = true;
 
-                } catch (Exception e){
+
+                } catch (Exception e) {
                     Log.e(TAG, "Error from Manual Input:" + e.getMessage());
                 }
 
                 dialog.dismiss();
             }
         });
-
 
 
         final AlertDialog manualWeightDialog = builder.create();
@@ -454,12 +459,14 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
             public void onClick(View view) {
                 Log.d(TAG, "Weight View Tap!");
                 manualWeightDialog.show();
-            };
+            }
+
+            ;
         });
 
         Button mTare;
         mTare = (Button) findViewById(R.id.button_zero);
-        if (mWeightRecorder.tareAfterAdd()){
+        if (mWeightRecorder.tareAfterAdd()) {
             mTare.setBackgroundColor(Color.GRAY);
             mTare.setText(R.string.btn_zero);
             mTare.setOnClickListener(new View.OnClickListener() {
@@ -467,7 +474,7 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
                 public void onClick(View view) {
                     Log.d(TAG, "Call Zero Tare");
                     ScaleMeasurement sm = mUsbScaleManager.getLatestMeasurement();
-                    if(sm != null) {
+                    if (sm != null) {
                         mUsbScaleManager.setAddToScaleWeight(sm.getRawScaleWeight());
                     } else {
                         Log.e(TAG, "Null ScaleMeasurement on Tare");
@@ -491,16 +498,79 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
         try {
             getSupportActionBar().setTitle(getString(R.string.app_name) + ": "
                     + mWeightRecorder.getOffice() + " (" + Utils.getBuildNumber().toString() + ") ∆ " + mWeightRecorder.getLastRecordedWeight());
-        } catch(Exception e) {
+        } catch (Exception e) {
             Log.e(TAG, "Error setting Title:" + e.getMessage());
         }
     }
 
-    public void requestStoragePermission(){
+    public void requestStoragePermission() {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 REQUEST_WRITE_STORAGE);
     }
 
+    Handler mTimeoutHandler;
+    Integer mTimeout = 1500;
+    TextView mScaleName;
+    LinearLayout mStatusBar;
+
+    private void scaleTimeout() {
+
+        mScaleName.setText(R.string.status_bar_msg_no_scale);
+        mStatusBar.setBackgroundColor(Color.rgb(127, 127, 127));
+    }
+
+    private void setDisplayWeight(Double inputWeight, String inputUnits, String scaleName){
+        setDisplayWeight(inputWeight, inputUnits, scaleName, true);
+    }
+
+    private void setDisplayWeight(Double inputWeight, String inputUnits, String scaleName, Boolean enableTimeout) {
+        /*
+        Double inputWeight = Double.parseDouble(input.getText().toString());
+        String inputUnits = manualUnitPicker.getSelectedItem().toString();
+        */
+        if (mTimeoutHandler == null) {
+            mTimeoutHandler = new android.os.Handler();
+        } else {
+            mTimeoutHandler.removeCallbacksAndMessages(null);
+        }
+        if (enableTimeout) {
+            mTimeoutHandler.postDelayed(
+                    new Runnable() {
+                        //@Override
+                        public void run() {
+                            Log.i(TAG, "timout message");
+                            scaleTimeout();
+                        }
+                    },
+                    mTimeout);
+        }
+
+        if (inputWeight == 0) {
+            mWeightUnit.setText("");
+        } else {
+            mWeightUnit.setText(inputUnits);
+            //mWeightUnit.setPaintFlags(mWeightUnit.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
+        }
+
+        //setContentView(R.layout.activity_main);
+        mScaleName.setText(scaleName + " Connected");
+        mStatusBar.setBackgroundColor(Color.rgb(150, 255, 150));
+        // Update the on Screen Display
+        mWeight.setText(Double.toString(inputWeight));
+        //mWeightUnit.setText(inputUnits);
+
+        // Underline the Unit to show it was a manual entry
+        //mWeightUnit.setPaintFlags(mWeightUnit.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
+        // Save the data so we can record it if the user taps a waste stream button
+        ScaleMeasurement.Builder measurementBuilder = new ScaleMeasurement.Builder();
+        measurementBuilder.rawScaleWeight(inputWeight);
+        measurementBuilder.scaleWeight(inputWeight);
+        measurementBuilder.units(inputUnits);
+        mLatestScaleMeasurement = measurementBuilder.build();
+
+        //ZeroWeightAfterAdd = true;
+    }
 
     public void saveWeight(String weightType) {
         ScaleMeasurement measurement = mLatestScaleMeasurement;
@@ -565,7 +635,7 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
 
             // Send an Intent to start Syncing if this is enabled
             SharedPreferences syncPreferences = getApplicationContext().getSharedPreferences(SyncToDriveService.PREFERENCES_NAME, Context.MODE_PRIVATE);
-            if(syncPreferences.getBoolean(SyncToDriveService.PREF_USE_GOOGLE_DRIVE, false)){
+            if (syncPreferences.getBoolean(SyncToDriveService.PREF_USE_GOOGLE_DRIVE, false)) {
                 startService(new Intent(this, SyncToDriveService.class));
             }
 
@@ -588,14 +658,15 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
                 mUsbScaleManager.setAddToScaleWeight(measurement.getRawScaleWeight());
             }
 
-            if (ZeroWeightAfterAdd){
+            if (ZeroWeightAfterAdd) {
                 Log.i(TAG, "Zeroing Display");
                 // Update the on Screen Display
                 mWeight.setText(R.string.weight);
                 mWeightUnit.setText("");
-                mWeightUnit.setPaintFlags(mWeightUnit.getPaintFlags() & (~ Paint.UNDERLINE_TEXT_FLAG));
+                mWeightUnit.setPaintFlags(mWeightUnit.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
                 mLatestScaleMeasurement = null;
                 ZeroWeightAfterAdd = false;
+                scaleTimeout();
             }
 
         } catch (Exception e) {
@@ -607,18 +678,20 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
     @Override
     public void onMeasurement(final ScaleMeasurement measurement) {
         Double weight = measurement.getScaleWeight();
+        setDisplayWeight(weight, measurement.getScaleUnit(), "USB SCALE");
         mWeight.setText(Double.toString(weight));
 
+        /*
         // If zero, hide the units since the USB data won't always show the correct setting
-        if (weight == 0){
+        if (weight == 0) {
             mWeightUnit.setText("");
         } else {
             mWeightUnit.setText(measurement.getScaleUnit());
-            mWeightUnit.setPaintFlags(mWeightUnit.getPaintFlags() & (~ Paint.UNDERLINE_TEXT_FLAG));
+            mWeightUnit.setPaintFlags(mWeightUnit.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
         }
-
+        */
         // Save this in case the user presses a waste stream button
-        mLatestScaleMeasurement = mUsbScaleManager.getLatestMeasurement();
+        // mLatestScaleMeasurement = mUsbScaleManager.getLatestMeasurement();
 
     }
 
@@ -666,15 +739,21 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
             try {
                 float fRemoteWeight = intent.getFloatExtra("floatScaleWeight", 0.0f);
                 String sRemoteUnit = intent.getStringExtra("stringScaleUnit");
-
+                String sDeviceAddress = intent.getStringExtra("stringScaleName");
+                if (sDeviceAddress == null) {
+                    sDeviceAddress = "Unknown";
+                }
                 // Assume KG as the default unit
-                if ((sRemoteUnit == null ) || (sRemoteUnit.length() < 1)){
+                if ((sRemoteUnit == null) || (sRemoteUnit.length() < 1)) {
                     sRemoteUnit = "KG";
                 } else {
                     sRemoteUnit = sRemoteUnit.toUpperCase();
                 }
                 Log.d(TAG, "RemoteScale Data Received: " + fRemoteWeight + " " + sRemoteUnit);
 
+                setDisplayWeight(Double.valueOf(Float.toString(fRemoteWeight)), sRemoteUnit, sDeviceAddress);
+
+                /*
                 // Update the on Screen Display
                 mWeight.setText(Float.toString(fRemoteWeight));
                 mWeightUnit.setText(sRemoteUnit);
@@ -683,18 +762,18 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
                 ScaleMeasurement.Builder measurementBuilder = new ScaleMeasurement.Builder();
                 measurementBuilder.rawScaleWeight(fRemoteWeight);
                 // ScaleMeasurement expects a double, this fixes some precision issues
-                double dWeight = Double.valueOf( Float.toString(fRemoteWeight));
+                double dWeight = Double.valueOf(Float.toString(fRemoteWeight));
                 measurementBuilder.scaleWeight(dWeight);
                 measurementBuilder.units(sRemoteUnit);
                 mLatestScaleMeasurement = measurementBuilder.build();
-
-            }  catch (Exception e) {
+                */
+            } catch (Exception e) {
                 Log.e(TAG, "REMOTE DATA BROADCAST RECEIVER ERROR: " + e.getMessage());
             }
         }
 
         // constructor
-        public RemoteScaleReceiver(){
+        public RemoteScaleReceiver() {
             Log.i(TAG, "Creating Broadcast Receiver");
         }
 

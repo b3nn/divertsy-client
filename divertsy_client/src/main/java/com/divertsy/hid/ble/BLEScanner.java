@@ -114,9 +114,13 @@ public class BLEScanner {
                 }
 
                 String deviceAddress = result.getDevice().getAddress();
+                String deviceName = result.getDevice().getName();
 
+                if (deviceName == null){
+                    deviceName = "";
+                }
                 // We should only have Eddystone or Scale results now, but need to check which one
-                if (! decodeScanRecordWeight(deviceAddress, scanRecord.getBytes())){
+                if (! decodeScanRecordWeight(deviceName, scanRecord.getBytes())){
 
                     // This now should be Eddystone data
                     Beacon beacon;
@@ -162,11 +166,11 @@ public class BLEScanner {
              * Check if the BLE data contains scale information (currently tested with WIT Traveller
              * devices.
              *
-             * @param   deviceAddress BLE mac address
+             * @param   deviceName BLE mac address
              * @param   scanRecord  BLE scan beacon bytes
              * @return  True if weight data was found in the array
              */
-            private boolean decodeScanRecordWeight(String deviceAddress, byte[] scanRecord) {
+            private boolean decodeScanRecordWeight(String deviceName, byte[] scanRecord) {
                 // scanRecords appear to be 62 bytes, but useful data is located before that.
                 // set the min record length to the max array value we'll be pulling
                 int MIN_RECORD_LENGTH = 25;
@@ -235,7 +239,7 @@ public class BLEScanner {
                             sendIntent.setAction("com.divertsy.REMOTE_SCALE_WEIGHT");
                             sendIntent.putExtra("floatScaleWeight", weightFloat);
                             sendIntent.putExtra("stringScaleUnit", unitString);
-                            sendIntent.putExtra("stringScaleName", deviceAddress);
+                            sendIntent.putExtra("stringScaleName", deviceName);
                             APPCONTEXT.sendBroadcast(sendIntent);
 
                         } catch (NumberFormatException e){
