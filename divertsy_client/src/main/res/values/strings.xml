@@ -61,6 +61,9 @@
 
     <string name="pref_title_pick_waste_streams">Waste Streams</string>
 
+    <string name="pref_use_ble_scale">Enable Bluetooth Scale</string>
+    <string name="pref_description_use_ble_scale">Scan for bluetooth scale data</string>
+
     <string name="pref_use_beacons">Use Beacons</string>
     <string name="pref_description_use_beacons">Will attempt to turn on Bluetooth and look for Eddystone URL location beacons.</string>
 

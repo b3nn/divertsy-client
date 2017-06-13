@@ -6,6 +6,12 @@
         android:title="@string/pref_tare_after_add" />
 
     <SwitchPreference
+        android:defaultValue="true"
+        android:key="use_ble_scale"
+        android:summary="@string/pref_description_use_ble_scale"
+        android:title="@string/pref_use_ble_scale" />
+
+    <SwitchPreference
         android:key="use_beacons"
         android:summary="@string/pref_description_use_beacons"
         android:title="@string/pref_use_beacons" />

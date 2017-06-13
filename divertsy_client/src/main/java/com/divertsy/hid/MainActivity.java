@@ -326,8 +326,9 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
             if (mBLEScanner != null) {
                 // If we get denied, we should stop trying.
                 if ((grantResults.length > 0) && (grantResults[0] == -1)){
-                    Log.e(TAG, "Coarse Permission denied. Turning off Beacon setting.");
+                    Log.e(TAG, "Coarse Permission denied. Turning off Beacon settings.");
                     mWeightRecorder.setUseBeacons(false);
+                    mWeightRecorder.setUseBleScale(false);
                 } else{
                     mBLEScanner.onRequestPermissionsResult(requestCode, grantResults);
                 }
@@ -340,8 +341,10 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
 
     private void checkIfBluetoothEnabled(){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            if (mWeightRecorder.useBluetoothBeacons()){
+            if (mWeightRecorder.useBluetoothBeacons() || mWeightRecorder.useBleScale()){
                 mBLEScanner = new BLEScanner(this, REQUEST_ENABLE_BLUETOOTH, this);
+            } else {
+                mBLEScanner = null;
             }
         }
     }

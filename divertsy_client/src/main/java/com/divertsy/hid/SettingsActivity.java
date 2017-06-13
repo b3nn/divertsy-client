@@ -169,7 +169,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             PreferenceManager prefMgr = getPreferenceManager();
             prefMgr.setSharedPreferencesName(WeightRecorder.PREFERENCES_NAME);
             addPreferencesFromResource(R.xml.pref_general);
+            prefMgr.setDefaultValues(getActivity().getApplicationContext(),R.xml.pref_general, false);
             setHasOptionsMenu(true);
+
+
 
             Preference addToScalePref = findPreference(WeightRecorder.PREF_ADD_TO_SCALE);
             bindPreferenceSummaryToValue(addToScalePref);

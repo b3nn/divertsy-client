@@ -20,6 +20,7 @@ public class WeightRecorder {
     public static final String PREF_USE_BIN_WEIGHT = "use_bin_weight";
     public static final String PREF_WASTE_STREAMS = "waste_streams";
     public static final String PREF_TARE_AFTER_ADD = "tare_after_add";
+    public static final String PREF_USE_BLE_SCALE = "use_ble_scale";
     public static final String PREF_USE_BEACONS = "use_beacons";
     public static final String PREF_LANGUAGE = "language";
 
@@ -46,6 +47,12 @@ public class WeightRecorder {
 
         mSharedPreferences.edit()
                 .putString(PREF_LAST_SAVED_DATA, saveText)
+                .apply();
+    }
+
+    public void setUseBleScale(Boolean value){
+        mSharedPreferences.edit()
+                .putBoolean(PREF_USE_BLE_SCALE, value)
                 .apply();
     }
 
@@ -76,6 +83,10 @@ public class WeightRecorder {
 
     public boolean tareAfterAdd() {
         return mSharedPreferences.getBoolean(PREF_TARE_AFTER_ADD, false);
+    }
+
+    public boolean useBleScale() {
+        return mSharedPreferences.getBoolean(PREF_USE_BLE_SCALE, true);
     }
 
     public boolean useBluetoothBeacons() {
