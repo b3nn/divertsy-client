@@ -39,6 +39,7 @@
         <item>OZ</item>
         <item>G</item>
         <item>TONS</item>
+        <item>BAGS</item>
     </string-array>
 
     <string name="pref_title_language">Language (for buttons)</string>
