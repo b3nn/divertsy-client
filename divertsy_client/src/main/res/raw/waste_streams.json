@@ -44,7 +44,7 @@
   "display_name_fr": "Sacs",
   "display_name_es": "Embalaje de plástico"
 }, {
-  "display_name": "Food Waste",
+  "display_name": "Compost",
   "logged_data_name": "compost",
   "button_color": "#FF64462B",
   "is_default": true,
@@ -67,4 +67,19 @@
   "display_name_de": "Elektronisch",
   "display_name_fr": "Électronique",
   "display_name_es": "Electrónicos"
+}, {
+  "display_name": "Food Donation",
+  "logged_data_name": "food_donation",
+  "button_color": "#FF58D68D",
+  "is_default": false
+}, {
+  "display_name": "Water",
+  "logged_data_name": "water",
+  "button_color": "#FF5DADE2",
+  "is_default": false
+}, {
+  "display_name": "Textiles",
+  "logged_data_name": "textiles",
+  "button_color": "#FFF5B041",
+  "is_default": false
 }]
