@@ -569,7 +569,7 @@ public class MainActivity extends AppCompatActivity implements UsbScaleManager.C
         measurementBuilder.units(inputUnits);
         mLatestScaleMeasurement = measurementBuilder.build();
 
-        //ZeroWeightAfterAdd = true;
+        ZeroWeightAfterAdd = true;
     }
 
     public void saveWeight(String weightType) {

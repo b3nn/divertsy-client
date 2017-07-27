@@ -6,17 +6,17 @@
     <EditText
         android:id="@+id/manual_weight_input"
         android:layout_height="145dp"
-        android:layout_width="150dp"
-        android:gravity="center"
+        android:layout_width="130sp"
         android:layout_centerInParent="true"
         android:textSize="50sp"
         android:hint="1.0"
+        android:gravity="center"
         android:textColorHint="#CCD1D1"
         android:inputType="numberDecimal" />
 
     <Spinner
         android:id="@+id/manual_weight_units"
-        android:layout_width="130dp"
+        android:layout_width="130sp"
         android:layout_height="100dp"
         android:layout_alignBottom="@+id/manual_weight_input"
         android:layout_toRightOf="@+id/manual_weight_input"
