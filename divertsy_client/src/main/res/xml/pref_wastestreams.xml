@@ -1,0 +1,20 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <MultiSelectListPreference
+        android:defaultValue="@array/temporary_placeholder_array"
+        android:entries="@array/temporary_placeholder_array"
+        android:entryValues="@array/temporary_placeholder_array"
+        android:key="waste_streams"
+        android:title="@string/pref_title_pick_waste_streams" />
+
+    <EditTextPreference
+        android:defaultValue="null"
+        android:inputType="textUri"
+        android:key="waste_streams_url"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:hint="http://www.example.com/waste.json"
+        android:title="@string/pref_title_waste_streams_url" />
+
+</PreferenceScreen>

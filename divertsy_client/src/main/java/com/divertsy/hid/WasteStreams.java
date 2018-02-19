@@ -34,6 +34,7 @@ public class WasteStreams {
     private String LanguageSetting;
 
     public static final String JSON_DISPLAY_NAME = "display_name";
+    public static final String REMOTE_STREAM_FILE = "remote_waste_streams.json";
 
     public void loadWasteStreams(Context context){
         StringBuilder json = new StringBuilder();
@@ -42,20 +43,54 @@ public class WasteStreams {
         ButtonColors = new ArrayList<String>();
         DefaultStreamValues = new ArrayList<String>();
         String displayNameField = JSON_DISPLAY_NAME;
-
         SharedPreferences prefs = context.getSharedPreferences(WeightRecorder.PREFERENCES_NAME, Context.MODE_PRIVATE);
         LanguageSetting = prefs.getString(WeightRecorder.PREF_LANGUAGE, "");
         if (LanguageSetting.length() > 0){
             displayNameField = JSON_DISPLAY_NAME + "_" + LanguageSetting;
         }
 
+        boolean remote_streams_load = false;
+
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    context.getResources().openRawResource(R.raw.waste_streams)));
+                    context.openFileInput(REMOTE_STREAM_FILE)));
             String line;
             while((line = reader.readLine()) != null) {
                 json.append(line);
             }
+            remote_streams_load = parseWasteSteamsFromString(json.toString(), displayNameField);
+
+        } catch (Exception e){
+            Log.e(TAG, e.getLocalizedMessage());
+        }
+
+        if (!remote_streams_load) {
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(
+                        context.getResources().openRawResource(R.raw.waste_streams)));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    json.append(line);
+                }
+                parseWasteSteamsFromString(json.toString(), displayNameField);
+
+            } catch (Exception e) {
+                Log.e(TAG, e.getLocalizedMessage());
+            }
+        }
+
+        // If there are no saved waste streams, set the value to the default streams
+        Set<String> savedStreams = prefs.getStringSet(WeightRecorder.PREF_WASTE_STREAMS, null);
+        if ((savedStreams == null) || (savedStreams.size() == 0)){
+            prefs.edit().putStringSet(WeightRecorder.PREF_WASTE_STREAMS,getDefaultStreamValuesSet()).apply();
+        }
+
+    }
+
+    private boolean parseWasteSteamsFromString(String json, String displayNameField){
+
+        try {
+
             JSONArray waste_streams = (JSONArray) new JSONTokener(json.toString()).nextValue();
 
 
@@ -84,14 +119,9 @@ public class WasteStreams {
 
         } catch (Exception e){
             Log.e(TAG, e.getLocalizedMessage());
+            return false;
         }
-
-        // If there are no saved waste streams, set the value to the default streams
-        Set<String> savedStreams = prefs.getStringSet(WeightRecorder.PREF_WASTE_STREAMS, null);
-        if ((savedStreams == null) || (savedStreams.size() == 0)){
-            prefs.edit().putStringSet(WeightRecorder.PREF_WASTE_STREAMS,getDefaultStreamValuesSet()).apply();
-        }
-
+        return true;
     }
 
     public CharSequence[] getAllStreamNames(){

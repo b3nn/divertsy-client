@@ -60,6 +60,8 @@
 
     <string name="pref_header_location">Location</string>
     <string name="pref_title_offices">Office Name</string>
+    <string name="pref_header_wastestream">Waste Streams</string>
+    <string name="pref_title_waste_streams_url">Load Waste Stream from URL</string>
     <string name="office_custom_choice">Custom (set name)</string>
 
     <string name="pref_title_pick_waste_streams">Waste Streams</string>

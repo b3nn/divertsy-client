@@ -13,14 +13,13 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
-import android.view.MenuItem;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.divertsy.hid.utils.WeightRecorder;
 
@@ -154,7 +153,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         return PreferenceFragment.class.getName().equals(fragmentName)
                 || GeneralPreferenceFragment.class.getName().equals(fragmentName)
                 || LocationPreferenceFragment.class.getName().equals(fragmentName)
-                || SyncPreferenceFragment.class.getName().equals(fragmentName);
+                || SyncPreferenceFragment.class.getName().equals(fragmentName)
+                || WasteSteamsPreferenceFragment.class.getName().equals(fragmentName);
     }
 
     /**
@@ -262,6 +262,75 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 }
             });
 
+        }
+
+        public void loadWasteStreamSettings(){
+            final MultiSelectListPreference streamPrefs = (MultiSelectListPreference) findPreference(WeightRecorder.PREF_WASTE_STREAMS);
+            WasteStreams wasteStreams = new WasteStreams();
+            wasteStreams.loadWasteStreams(getActivity().getApplicationContext());
+
+            streamPrefs.setDefaultValue(wasteStreams.getDefaultStreamValues());
+            streamPrefs.setEntries(wasteStreams.getAllStreamNames());
+            streamPrefs.setEntryValues(wasteStreams.getAllStreamValues());
+            bindPreferenceSummaryToValue(streamPrefs);
+        }
+
+        // Places an older Drive ID file which might be associated with an office to the current Drive ID
+        public void setDriveIdFromOffice(String office){
+            PreferenceManager prefMgr = getPreferenceManager();
+            String spf = prefMgr.getSharedPreferencesName();
+            prefMgr.setSharedPreferencesName(SyncToDriveService.PREFERENCES_NAME);
+
+            String officeDriveIDkey =  SyncToDriveService.PREF_DRIVE_ID + ":" + office;
+            String sDriveID = prefMgr.getSharedPreferences().getString(officeDriveIDkey, "");
+
+            prefMgr.getSharedPreferences().edit()
+                    .putString(SyncToDriveService.PREF_DRIVE_ID, sDriveID)
+                    .apply();
+
+            prefMgr.setSharedPreferencesName(spf);
+
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            int id = item.getItemId();
+            if (id == android.R.id.home) {
+                NavUtils.navigateUpFromSameTask(this.getActivity());
+                return true;
+            }
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * This fragment shows notification preferences only. It is used when the
+     * activity is showing a two-pane settings UI.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class WasteSteamsPreferenceFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            PreferenceManager prefMgr = getPreferenceManager();
+            prefMgr.setSharedPreferencesName(WeightRecorder.PREFERENCES_NAME);
+            addPreferencesFromResource(R.xml.pref_wastestreams);
+            setHasOptionsMenu(true);
+
+            loadWasteStreamSettings();
+
+            Preference pref_wastestream_url = findPreference("waste_streams_url");
+            pref_wastestream_url.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object value) {
+                    Log.d("Divertsy Settings", "URL is:" + value.toString());
+
+                    Intent i = new Intent(getActivity(), WasteStreamsUpdateService.class).putExtra("URL", value.toString());
+                    getActivity().startService(i);
+
+                    return sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, value);
+                }
+            });
         }
 
         public void loadWasteStreamSettings(){
