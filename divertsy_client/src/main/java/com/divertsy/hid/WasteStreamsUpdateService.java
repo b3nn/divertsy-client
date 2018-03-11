@@ -3,9 +3,17 @@ package com.divertsy.hid;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.divertsy.hid.utils.WeightRecorder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -49,6 +57,12 @@ public class WasteStreamsUpdateService extends Service {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             String waste_stream_url = params[0];
+            // in case user does not put http:// or https:// in url will add https:// gracefully
+            if (!waste_stream_url.contains("://")){
+                waste_stream_url = "https://" + waste_stream_url;
+                Log.i(TAG, "added https://");
+                Log.i(TAG, "New URL = " +waste_stream_url);
+            }
 
             // Will contain the raw JSON response as a string.
             String forecastJsonStr = null;
@@ -140,8 +154,22 @@ public class WasteStreamsUpdateService extends Service {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            writeToFile(s, getApplicationContext());
-            Log.i(TAG, s);
+            if(s != null) {
+                writeToFile(s, getApplicationContext());
+                Log.i(TAG, s);
+            }else{
+                Log.i(TAG, "URL does not compute");
+                Toast.makeText(getApplicationContext(),"This URL doesn't contain valid waste streams - using defaults instead.", Toast.LENGTH_LONG).show();
+                SharedPreferences prefs = getApplicationContext().getSharedPreferences(WeightRecorder.PREFERENCES_NAME, Context.MODE_PRIVATE);
+                //prefs.edit().remove("waste_streams_url").commit();
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("show_url", true);
+
+                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class );
+                intent.putExtra( PreferenceActivity.EXTRA_SHOW_FRAGMENT, SettingsActivity.WasteSteamsPreferenceFragment.class.getName() );
+                intent.putExtra( PreferenceActivity.EXTRA_SHOW_FRAGMENT_ARGUMENTS, bundle );
+                startActivity(intent);
+            }
         }
     }
 }

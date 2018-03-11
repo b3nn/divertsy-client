@@ -15,6 +15,7 @@ import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
@@ -331,6 +332,36 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     return sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, value);
                 }
             });
+            bundle2string(savedInstanceState);
+
+            if (savedInstanceState != null && savedInstanceState.getBoolean("show_url", false )){
+                Log.i("savedInstanceState", "WE ARE HERE – About to call showURLDialog");
+                showURLDialog();
+            }
+
+
+        }
+
+        public static String bundle2string(Bundle bundle) {
+            if (bundle == null) {
+                Log.i("bundle2string", "Bundle was null");
+                return null;
+            }
+            String string = "Bundle{";
+            for (String key : bundle.keySet()) {
+                string += " " + key + " => " + bundle.get(key) + ";";
+            }
+            string += " }Bundle";
+            Log.i("bundle is", string);
+            return string;
+        }
+
+        public void showURLDialog(){
+            PreferenceScreen screen = (PreferenceScreen) findPreference("waste_stream_pref_key");
+
+            screen.onItemClick(null, null, 1, 0);
+            Log.i("showURLDialog()", "WE ARE HERE – we have called showURLDialog");
+
         }
 
         public void loadWasteStreamSettings(){
