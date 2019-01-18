@@ -118,9 +118,7 @@ public class WasteStreamsUpdateService extends Service {
                 }
                 forecastJsonStr = buffer.toString();
             } catch (IOException e) {
-                Log.e("PlaceholderFragment", "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
-                // to parse it.
+                Log.e(TAG, "Error ", e);
                 return null;
             } finally{
                 if (urlConnection != null) {
@@ -130,7 +128,7 @@ public class WasteStreamsUpdateService extends Service {
                     try {
                         reader.close();
                     } catch (final IOException e) {
-                        Log.e("PlaceholderFragment", "Error closing stream", e);
+                        Log.e(TAG, "Error closing stream", e);
                     }
                 }
 

@@ -58,7 +58,10 @@ public class WasteStreams {
             while((line = reader.readLine()) != null) {
                 json.append(line);
             }
-            remote_streams_load = parseWasteSteamsFromString(json.toString(), displayNameField);
+            // We may have other data in this config, so only pull out the waste stream
+            JSONObject full_json = (JSONObject) new JSONTokener(json.toString()).nextValue();
+            JSONArray waste_array = full_json.getJSONArray("default_streams");
+            remote_streams_load = parseWasteSteamsFromString(waste_array.toString(), displayNameField);
 
         } catch (Exception e){
             Log.e(TAG, e.getLocalizedMessage());

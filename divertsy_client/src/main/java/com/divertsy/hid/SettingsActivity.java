@@ -243,7 +243,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 }
             });
 
-            loadWasteStreamSettings();
+            //loadWasteStreamSettings();
 
             final ListPreference language = (ListPreference) findPreference(WeightRecorder.PREF_LANGUAGE);
 
